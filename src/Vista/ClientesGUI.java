@@ -1,6 +1,8 @@
 package Vista;
 
 import Conexion.ConexionDB;
+import Controlador.ClientesDAO;
+import Modelo.Clientes;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -23,6 +25,8 @@ public class ClientesGUI
     private JButton editarButton;
     private JButton eliminarButton;
 
+    ClientesDAO clientesDAO = new ClientesDAO();
+
     public ClientesGUI()
     {
         obtenerDatos();
@@ -31,6 +35,7 @@ public class ClientesGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                agregar();
                 obtenerDatos();
             }
         });
@@ -39,6 +44,7 @@ public class ClientesGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                editar();
                 obtenerDatos();
             }
         });
@@ -89,6 +95,38 @@ public class ClientesGUI
             e.printStackTrace();
         }
 
+    }
+
+    public void agregar()
+    {
+        String nombre = textField2.getText();
+        String telefono = textField3.getText();
+        String correo = textField4.getText();
+
+        Clientes clientes = new Clientes(0,nombre,telefono,correo);
+
+        if (clientesDAO.agregar(clientes))
+        {
+
+            JOptionPane.showMessageDialog(null, "Agregado con Exito");
+        }
+
+        else
+        {
+            JOptionPane.showMessageDialog(null,"No se agrego con Exito");
+        }
+
+    }
+
+    public void editar()
+    {
+        int IdCliente = Integer.parseInt(textField1.getText());
+        String nombre = textField2.getText();
+        String telefono = textField3.getText();
+        String correo = textField4.getText();
+
+        Clientes clientes = new Clientes(IdCliente,nombre,telefono,correo);
+        clientesDAO.actualizar(clientes);
     }
 
     public static void main(String[] args)
