@@ -1,11 +1,16 @@
 package Vista;
 
 import Conexion.ConexionDB;
+import Controlador.ProductosDAO;
+import Modelo.Clientes;
+import Modelo.Productos;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,14 +29,24 @@ public class ProductosGUI
     private JButton editarButton;
     private JButton eliminarButton;
 
+    ProductosDAO productosDAO = new ProductosDAO();
+
     public ProductosGUI()
     {
+        obtenerDatos();
         agregarButton.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                String nombreP = textField2.getText();
+                String categoria = textField3.getText();
+                int precio_u = Integer.parseInt(textField4.getText());
+                String disponibilidad = textField5.getText();
 
+                Productos productos = new Productos(1,nombreP,categoria,precio_u, disponibilidad);
+                productosDAO.agregar(productos);
+                obtenerDatos();
             }
         });
         editarButton.addActionListener(new ActionListener()
@@ -39,7 +54,15 @@ public class ProductosGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                String nombre = textField2.getText();
+                String categoria = textField3.getText();
+                int precio = Integer.parseInt(textField4.getText());
+                String disponibilidad = textField5.getText();
+                int id = Integer.parseInt(textField1.getText());
 
+                Productos productos = new Productos(id, nombre, categoria, precio, disponibilidad);
+                productosDAO.actualizar(productos);
+                obtenerDatos();
             }
         });
         eliminarButton.addActionListener(new ActionListener()
@@ -47,7 +70,27 @@ public class ProductosGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                int id = Integer.parseInt(textField1.getText());
+                productosDAO.eliminar(id);
+                obtenerDatos();
+            }
+        });
+        table1.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                super.mouseClicked(e);
 
+                int selectFile = table1.getSelectedRow();
+
+                if (selectFile >= 0)
+                {
+                    textField1.setText((String) table1.getValueAt(selectFile, 0));
+                    textField2.setText((String) table1.getValueAt(selectFile, 1));
+                    textField3.setText((String) table1.getValueAt(selectFile, 2));
+                    textField4.setText((String) table1.getValueAt(selectFile, 3));
+                }
             }
         });
     }

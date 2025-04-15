@@ -1,11 +1,16 @@
 package Vista;
 
 import Conexion.ConexionDB;
+import Controlador.MesasDAO;
+import Modelo.Clientes;
+import Modelo.Mesas;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,13 +28,22 @@ public class MesasGUI
     private JButton editarButton;
     private JButton eliminarButton;
 
+    MesasDAO mesasDAO = new MesasDAO();
+
     public MesasGUI()
     {
+        obtenerDatos();
         agregarButton.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                String numero = textField2.getText();
+                String capacidad = textField3.getText();
+                String estado_mesa = textField4.getText();
+
+                Mesas mesas = new Mesas(1,numero,capacidad,estado_mesa);
+                mesasDAO.agregar(mesas);
                 obtenerDatos();
             }
         });
@@ -38,6 +52,13 @@ public class MesasGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                String numero = textField2.getText();
+                String capacidad = textField3.getText();
+                String estado_mesa = textField4.getText();
+                int id = Integer.parseInt(textField1.getText());
+
+                Mesas mesas = new Mesas(id, numero, capacidad, estado_mesa);
+                mesasDAO.actualizar(mesas);
                 obtenerDatos();
             }
         });
@@ -46,7 +67,27 @@ public class MesasGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                int id = Integer.parseInt(textField1.getText());
+                mesasDAO.eliminar(id);
                 obtenerDatos();
+            }
+        });
+        table1.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                super.mouseClicked(e);
+
+                int selectFile = table1.getSelectedRow();
+
+                if (selectFile >= 0)
+                {
+                    textField1.setText((String) table1.getValueAt(selectFile, 0));
+                    textField2.setText((String) table1.getValueAt(selectFile, 1));
+                    textField3.setText((String) table1.getValueAt(selectFile, 2));
+                    textField4.setText((String) table1.getValueAt(selectFile, 3));
+                }
             }
         });
     }

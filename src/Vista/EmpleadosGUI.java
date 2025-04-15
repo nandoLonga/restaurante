@@ -1,11 +1,14 @@
 package Vista;
 
 import Conexion.ConexionDB;
-
+import Controlador.EmpleadosDAO;
+import Modelo.Empleados;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,6 +26,7 @@ public class EmpleadosGUI
     private JButton editarButton;
     private JButton eliminarButton;
 
+    EmpleadosDAO empleadosDAO = new EmpleadosDAO();
 
     public EmpleadosGUI()
     {
@@ -32,6 +36,12 @@ public class EmpleadosGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                String nombre = textField2.getText();
+                String cargo = textField3.getText();
+                int salario = Integer.parseInt(textField4.getText());
+
+                Empleados empleados = new Empleados(1,nombre,cargo,salario);
+                empleadosDAO.agregar(empleados);
                 obtenerDatos();
             }
         });
@@ -40,6 +50,13 @@ public class EmpleadosGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                String nombre = textField2.getText();
+                String cargo = textField3.getText();
+                int salario = Integer.parseInt(textField4.getText());
+                int id = Integer.parseInt(textField1.getText());
+
+                Empleados empleados = new Empleados(id, nombre, cargo, salario);
+                empleadosDAO.actualizar(empleados);
                 obtenerDatos();
             }
         });
@@ -48,7 +65,28 @@ public class EmpleadosGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                int id = Integer.parseInt(textField1.getText());
+                empleadosDAO.eliminar(id);
+
                 obtenerDatos();
+            }
+        });
+        table1.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                super.mouseClicked(e);
+
+                int selectFile = table1.getSelectedRow();
+
+                if (selectFile >= 0)
+                {
+                    textField1.setText((String) table1.getValueAt(selectFile, 0));
+                    textField2.setText((String) table1.getValueAt(selectFile, 1));
+                    textField3.setText((String) table1.getValueAt(selectFile, 2));
+                    textField4.setText((String) table1.getValueAt(selectFile, 3));
+                }
             }
         });
     }

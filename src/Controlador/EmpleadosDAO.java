@@ -1,28 +1,31 @@
 package Controlador;
+
 import Conexion.ConexionDB;
 import Modelo.Clientes;
+import Modelo.Empleados;
+
 import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class ClientesDAO
+public class EmpleadosDAO
 {
     ConexionDB conexionDB = new ConexionDB();
     //Agregar
-    public void agregar (Clientes clientes)
+    public void agregar (Empleados empleados)
     {
         Connection con = conexionDB.getConnection();
 
-        String query = "INSERT INTO clientes (nombre, telefono, correo) VALUES (?,?,?)";
+        String query = "INSERT INTO empleados (nombre, cargo, salario) VALUES (?,?,?)";
 
         try
         {
             PreparedStatement pst = con.prepareStatement(query);
 
-            pst.setString(1, clientes.getNombre());
-            pst.setString(2, clientes.getTelefono());
-            pst.setString(3, clientes.getCorreo());
+            pst.setString(1, empleados.getNombre());
+            pst.setString(2, empleados.getCargo());
+            pst.setInt(3, empleados.getSalario());
 
 
             int resultado = pst.executeUpdate();
@@ -41,20 +44,20 @@ public class ClientesDAO
             JOptionPane.showMessageDialog(null, "Error en la ejecucion");
         }
     }
-    public void actualizar (Clientes clientes)
+    public void actualizar (Empleados empleados)
     {
         Connection con = conexionDB.getConnection();
 
-        String query = "UPDATE clientes SET nombre = ?, telefono = ?, correo = ? WHERE id_cliente = ?";
+        String query = "UPDATE empleados SET nombre = ?, cargo = ?, salario = ? WHERE id_empleado = ?";
 
         try
         {
             PreparedStatement pst = con.prepareStatement(query);
 
-            pst.setString(1, clientes.getNombre());
-            pst.setString(2, clientes.getTelefono());
-            pst.setString(3, clientes.getCorreo());
-            pst.setInt(4, clientes.getId_cliente());
+            pst.setString(1, empleados.getNombre());
+            pst.setString(2, empleados.getCargo());
+            pst.setInt(3, empleados.getSalario());
+            pst.setInt(4, empleados.getId_empleado());
 
             int resultado = pst.executeUpdate();
             if (resultado > 0)
@@ -71,12 +74,11 @@ public class ClientesDAO
             JOptionPane.showMessageDialog(null, "Error en la ejecucion");
         }
     }
-
     public void eliminar (int id)
     {
         Connection con = conexionDB.getConnection();
 
-        String query = "DELETE FROM clientes WHERE id_cliente = ?";
+        String query = "DELETE FROM empleados WHERE id_empleado = ?";
 
         try
         {

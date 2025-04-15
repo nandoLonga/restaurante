@@ -1,28 +1,30 @@
 package Controlador;
+
 import Conexion.ConexionDB;
-import Modelo.Clientes;
+import Modelo.Productos;
 import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class ClientesDAO
+public class ProductosDAO
 {
     ConexionDB conexionDB = new ConexionDB();
     //Agregar
-    public void agregar (Clientes clientes)
+    public void agregar (Productos productos)
     {
         Connection con = conexionDB.getConnection();
 
-        String query = "INSERT INTO clientes (nombre, telefono, correo) VALUES (?,?,?)";
+        String query = "INSERT INTO productos (nombreP, categoria, precio_u, disponibilidad) VALUES (?,?,?,?)";
 
         try
         {
             PreparedStatement pst = con.prepareStatement(query);
 
-            pst.setString(1, clientes.getNombre());
-            pst.setString(2, clientes.getTelefono());
-            pst.setString(3, clientes.getCorreo());
+            pst.setString(1, productos.getNombreP());
+            pst.setString(2, productos.getCategoria());
+            pst.setInt(3, productos.getPrecio_u());
+            pst.setString(2, productos.getDisponibilidad());
 
 
             int resultado = pst.executeUpdate();
@@ -41,20 +43,21 @@ public class ClientesDAO
             JOptionPane.showMessageDialog(null, "Error en la ejecucion");
         }
     }
-    public void actualizar (Clientes clientes)
+    public void actualizar (Productos productos)
     {
         Connection con = conexionDB.getConnection();
 
-        String query = "UPDATE clientes SET nombre = ?, telefono = ?, correo = ? WHERE id_cliente = ?";
+        String query = "UPDATE productos SET nombreP = ?, categoria = ?, precio_u = ?, disponibilidad = ? WHERE id_producto = ?";
 
         try
         {
             PreparedStatement pst = con.prepareStatement(query);
 
-            pst.setString(1, clientes.getNombre());
-            pst.setString(2, clientes.getTelefono());
-            pst.setString(3, clientes.getCorreo());
-            pst.setInt(4, clientes.getId_cliente());
+            pst.setString(1, productos.getNombreP());
+            pst.setString(2, productos.getCategoria());
+            pst.setInt(3, productos.getPrecio_u());
+            pst.setString(2, productos.getDisponibilidad());
+            pst.setInt(4, productos.getId_producto());
 
             int resultado = pst.executeUpdate();
             if (resultado > 0)
@@ -76,7 +79,7 @@ public class ClientesDAO
     {
         Connection con = conexionDB.getConnection();
 
-        String query = "DELETE FROM clientes WHERE id_cliente = ?";
+        String query = "DELETE FROM productos WHERE id_producto = ?";
 
         try
         {

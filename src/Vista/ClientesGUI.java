@@ -3,11 +3,12 @@ package Vista;
 import Conexion.ConexionDB;
 import Controlador.ClientesDAO;
 import Modelo.Clientes;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,7 +36,12 @@ public class ClientesGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                agregar();
+                String nombre = textField2.getText();
+                String telefono = textField3.getText();
+                String correo = textField4.getText();
+
+                Clientes clientes = new Clientes(1,nombre,telefono,correo);
+                clientesDAO.agregar(clientes);
                 obtenerDatos();
             }
         });
@@ -44,16 +50,45 @@ public class ClientesGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                editar();
+                String nombre = textField2.getText();
+                String telefono = textField3.getText();
+                String correo = textField4.getText();
+                int id = Integer.parseInt(textField1.getText());
+
+                Clientes clientes = new Clientes(id, nombre, telefono, correo);
+                clientesDAO.actualizar(clientes);
                 obtenerDatos();
             }
         });
+
+
         eliminarButton.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                int id = Integer.parseInt(textField1.getText());
+                clientesDAO.eliminar(id);
                 obtenerDatos();
+            }
+        });
+
+        table1.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                super.mouseClicked(e);
+
+                int selectFile = table1.getSelectedRow();
+
+                if (selectFile >= 0)
+                {
+                    textField1.setText((String) table1.getValueAt(selectFile, 0));
+                    textField2.setText((String) table1.getValueAt(selectFile, 1));
+                    textField3.setText((String) table1.getValueAt(selectFile, 2));
+                    textField4.setText((String) table1.getValueAt(selectFile, 3));
+                }
             }
         });
     }
@@ -95,38 +130,6 @@ public class ClientesGUI
             e.printStackTrace();
         }
 
-    }
-
-    public void agregar()
-    {
-        String nombre = textField2.getText();
-        String telefono = textField3.getText();
-        String correo = textField4.getText();
-
-        Clientes clientes = new Clientes(0,nombre,telefono,correo);
-
-        if (clientesDAO.agregar(clientes))
-        {
-
-            JOptionPane.showMessageDialog(null, "Agregado con Exito");
-        }
-
-        else
-        {
-            JOptionPane.showMessageDialog(null,"No se agrego con Exito");
-        }
-
-    }
-
-    public void editar()
-    {
-        int IdCliente = Integer.parseInt(textField1.getText());
-        String nombre = textField2.getText();
-        String telefono = textField3.getText();
-        String correo = textField4.getText();
-
-        Clientes clientes = new Clientes(IdCliente,nombre,telefono,correo);
-        clientesDAO.actualizar(clientes);
     }
 
     public static void main(String[] args)
