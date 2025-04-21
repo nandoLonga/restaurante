@@ -1,19 +1,15 @@
-package Vista;
+package vista;
 
-import Conexion.ConexionDB;
+import controlador.MesasDAO;
+import modelo.Mesas;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
-public class MesasGUI
-{
-    private JPanel main;
+public class MesasGUI {
+    public JPanel panel1;
     private JTable table1;
     private JTextField textField1;
     private JTextField textField2;
@@ -23,81 +19,122 @@ public class MesasGUI
     private JButton editarButton;
     private JButton eliminarButton;
 
-    public MesasGUI()
-    {
-        agregarButton.addActionListener(new ActionListener()
-        {
+    private final MesasDAO mesasDAO = new MesasDAO();
+
+    public MesasGUI() {
+        initializeUIComponents();
+    }
+
+    private void initializeUIComponents() {
+        obtenerDatos();
+
+        agregarButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                obtenerDatos();
+            public void actionPerformed(ActionEvent e) {
+                String numero = textField2.getText();
+                String capacidad = textField3.getText();
+                String estado = textField4.getText();
+
+                if (!numero.isEmpty() && !capacidad.isEmpty() && !estado.isEmpty()) {
+                    Mesas mesa = new Mesas(0, numero, capacidad, estado);
+                    mesasDAO.agregar(mesa);
+                    limpiarCampos();
+                    obtenerDatos();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Todos los campos deben estar completos.");
+                }
             }
         });
-        editarButton.addActionListener(new ActionListener()
-        {
+
+        editarButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                obtenerDatos();
+            public void actionPerformed(ActionEvent e) {
+                String idTexto = textField1.getText();
+                String numero = textField2.getText();
+                String capacidad = textField3.getText();
+                String estado = textField4.getText();
+
+                if (!idTexto.isEmpty() && !numero.isEmpty() && !capacidad.isEmpty() && !estado.isEmpty()) {
+                    try {
+                        int id_mesa = Integer.parseInt(idTexto);
+                        Mesas mesa = new Mesas(id_mesa, numero, capacidad, estado);
+                        mesasDAO.actualizar(mesa);
+                        limpiarCampos();
+                        obtenerDatos();
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "El ID debe ser un número.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Todos los campos deben estar completos.");
+                }
             }
         });
-        eliminarButton.addActionListener(new ActionListener()
-        {
+
+        eliminarButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                obtenerDatos();
+            public void actionPerformed(ActionEvent e) {
+                String idTexto = textField1.getText();
+                if (!idTexto.isEmpty()) {
+                    try {
+                        int id_mesa = Integer.parseInt(idTexto);
+                        mesasDAO.eliminar(id_mesa);
+                        limpiarCampos();
+                        obtenerDatos();
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "El ID debe ser un número.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "El campo de ID está vacío.");
+                }
+            }
+        });
+
+
+        table1.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && table1.getSelectedRow() != -1) {
+                int selectedRow = table1.getSelectedRow();
+                textField1.setText(table1.getValueAt(selectedRow, 0).toString());
+                textField2.setText(table1.getValueAt(selectedRow, 1).toString());
+                textField3.setText(table1.getValueAt(selectedRow, 2).toString());
+                textField4.setText(table1.getValueAt(selectedRow, 3).toString());
             }
         });
     }
 
-    ConexionDB conexionDB = new ConexionDB();
-
-    public void obtenerDatos()
-    {
+    private void obtenerDatos() {
         DefaultTableModel model = new DefaultTableModel();
-
-        model.addColumn("Id Mesas");
-        model.addColumn("Numero de Masa");
+        model.addColumn("ID Mesa");
+        model.addColumn("Número");
         model.addColumn("Capacidad");
-        model.addColumn("Estado de Mesa");
+        model.addColumn("Estado");
+
+        for (Mesas mesa : mesasDAO.obtenerTodos()) {
+            Object[] fila = {
+                    mesa.getId_mesas(),
+                    mesa.getNumero(),
+                    mesa.getCapacidad(),
+                    mesa.getEstado_mesa()
+            };
+            model.addRow(fila);
+        }
 
         table1.setModel(model);
-
-        String[] dato = new String[4];
-
-        Connection con = conexionDB.getConnection();
-
-        try
-        {
-            Statement stmt = con. createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM mesas");
-
-            while (rs.next())
-            {
-                dato[0] = rs.getString(1);
-                dato[1] = rs.getString(2);
-                dato[2] = rs.getString(3);
-                dato[3] = rs.getString(4);
-
-                model.addRow(dato);
-            }
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
-
     }
 
-    public static void main(String[] args)
-    {
+    private void limpiarCampos() {
+        textField1.setText("");
+        textField2.setText("");
+        textField3.setText("");
+        textField4.setText("");
+    }
+
+    public static void main(String[] args) {
         JFrame frame = new JFrame("CRUD Mesas");
-        frame.setContentPane(new MesasGUI().main);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setContentPane(new MesasGUI().panel1);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
-        frame.setVisible(true);
-        frame.setSize(800,600);
+        frame.setSize(800, 600);
         frame.setResizable(false);
+        frame.setVisible(true);
     }
 }
