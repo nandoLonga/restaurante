@@ -2,9 +2,7 @@ package Vista;
 
 import Conexion.ConexionDB;
 import Controlador.ProductosDAO;
-import Modelo.Clientes;
 import Modelo.Productos;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
@@ -39,12 +37,12 @@ public class ProductosGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                String nombreP = textField2.getText();
+                String nombre = textField2.getText();
                 String categoria = textField3.getText();
                 int precio_u = Integer.parseInt(textField4.getText());
                 String disponibilidad = textField5.getText();
 
-                Productos productos = new Productos(1,nombreP,categoria,precio_u, disponibilidad);
+                Productos productos = new Productos(1,nombre,categoria,precio_u, disponibilidad);
                 productosDAO.agregar(productos);
                 obtenerDatos();
             }
@@ -108,7 +106,7 @@ public class ProductosGUI
 
         table1.setModel(model);
 
-        String[] dato = new String[4];
+        String[] dato = new String[5];
 
         Connection con = conexionDB.getConnection();
 
@@ -137,7 +135,7 @@ public class ProductosGUI
 
     public static void main(String[] args)
     {
-        JFrame frame = new JFrame("CRUD Clientes");
+        JFrame frame = new JFrame("CRUD Productos");
         frame.setContentPane(new ProductosGUI().main);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();

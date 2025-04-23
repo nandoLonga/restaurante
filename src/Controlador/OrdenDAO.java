@@ -1,30 +1,32 @@
 package Controlador;
 
 import Conexion.ConexionDB;
-import Modelo.Productos;
+import Modelo.Orden;
 import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class ProductosDAO
+public class OrdenDAO
 {
     ConexionDB conexionDB = new ConexionDB();
     //Agregar
-    public void agregar (Productos productos)
+    public void agregar (Orden orden)
     {
         Connection con = conexionDB.getConnection();
 
-        String query = "INSERT INTO productos (nombre, categoria, precio_u, disponibilidad) VALUES (?,?,?,?)";
+        String query = "INSERT INTO orden (total_orden, estado_orden, id_cliente, id_empleado, id_mesa, fecha_orden) VALUES (?,?,?,?,?,?)";
 
         try
         {
             PreparedStatement pst = con.prepareStatement(query);
 
-            pst.setString(1, productos.getNombreP());
-            pst.setString(2, productos.getCategoria());
-            pst.setInt(3, productos.getPrecio_u());
-            pst.setString(4, productos.getDisponibilidad());
+            pst.setInt(1, orden.getTotal_orden());
+            pst.setString(2, orden.getEstado_orden());
+            pst.setInt(3, orden.getId_cliente());
+            pst.setInt(4, orden.getId_empleado());
+            pst.setInt(5, orden.getId_mesa());
+            pst.setString(6, orden.getFecha_orden());
 
 
             int resultado = pst.executeUpdate();
@@ -34,7 +36,7 @@ public class ProductosDAO
                 JOptionPane.showMessageDialog(null, "Registro agregado con exito.");
             } else
             {
-                JOptionPane.showMessageDialog(null, "Registro NO agregado con exito.");
+                JOptionPane.showMessageDialog(null, "Registro NO agreado con exito.");
             }
 
         } catch (SQLException e)
@@ -43,21 +45,24 @@ public class ProductosDAO
             JOptionPane.showMessageDialog(null, "Error en la ejecucion");
         }
     }
-    public void actualizar (Productos productos)
+
+    public void actualizar (Orden orden)
     {
         Connection con = conexionDB.getConnection();
 
-        String query = "UPDATE productos SET nombre = ?, categoria = ?, precio_u = ?, disponibilidad = ? WHERE id_producto = ?";
+        String query = "UPDATE orden SET total_orden = ?, estado_orden = ?, id_cliente = ?, id_empleado = ?, id_mesa = ?, fecha_orden = ? WHERE id_orden = ?";
 
         try
         {
             PreparedStatement pst = con.prepareStatement(query);
 
-            pst.setString(1, productos.getNombreP());
-            pst.setString(2, productos.getCategoria());
-            pst.setInt(3, productos.getPrecio_u());
-            pst.setString(4, productos.getDisponibilidad());
-            pst.setInt(5, productos.getId_producto());
+            pst.setInt(1, orden.getTotal_orden());
+            pst.setString(2, orden.getEstado_orden());
+            pst.setInt(3, orden.getId_cliente());
+            pst.setInt(4, orden.getId_empleado());
+            pst.setInt(5, orden.getId_mesa());
+            pst.setString(6, orden.getFecha_orden());
+            pst.setInt(7, orden.getId_orden());
 
             int resultado = pst.executeUpdate();
             if (resultado > 0)
@@ -74,12 +79,11 @@ public class ProductosDAO
             JOptionPane.showMessageDialog(null, "Error en la ejecucion");
         }
     }
-
     public void eliminar (int id)
     {
         Connection con = conexionDB.getConnection();
 
-        String query = "DELETE FROM productos WHERE id_producto = ?";
+        String query = "DELETE FROM orden WHERE id_orden = ?";
 
         try
         {
@@ -103,3 +107,4 @@ public class ProductosDAO
         }
     }
 }
+

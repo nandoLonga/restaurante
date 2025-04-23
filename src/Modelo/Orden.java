@@ -11,10 +11,9 @@ public class Orden
     int id_cliente;
     int id_empleado;
     int id_mesa;
-    int cantidad;
-    Timestamp fecha_orden;
+    String fecha_orden;
 
-    public Orden(int id_orden, int total_orden, String estado_orden, int id_cliente, int id_empleado, int id_mesa, int cantidad, Timestamp fecha_orden)
+    public Orden(int id_orden, int total_orden, String estado_orden, int id_cliente, int id_empleado, int id_mesa, String fecha_orden)
     {
         this.id_orden = id_orden;
         this.total_orden = total_orden;
@@ -23,7 +22,6 @@ public class Orden
         this.id_empleado = id_empleado;
         this.id_mesa = id_mesa;
         this.fecha_orden = fecha_orden;
-        this.cantidad = cantidad;
     }
 
     public int getId_orden()
@@ -85,23 +83,13 @@ public class Orden
         this.id_mesa = id_mesa;
     }
 
-    public Timestamp getFecha_orden()
+    public String getFecha_orden()
     {
         return fecha_orden;
     }
 
-    public void setFecha_orden(Timestamp fecha_orden)
+    public void setFecha_orden(String fecha_orden)
     {
         this.fecha_orden = fecha_orden;
-    }
-
-    public void setCantidad(int cantidad)
-    {
-        this.cantidad = cantidad;
-    }
-
-    public int getCantidad()
-    {
-        return cantidad;
     }
 }

@@ -1,9 +1,7 @@
 package Controlador;
 
 import Conexion.ConexionDB;
-import Modelo.Clientes;
 import Modelo.Empleados;
-
 import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

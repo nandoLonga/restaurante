@@ -5,7 +5,7 @@ import java.util.Stack;
 public class Productos
 {
     int id_producto;
-    String nombreP;
+    String nombre;
     String categoria;
     int precio_u;
     String disponibilidad;
@@ -15,10 +15,10 @@ public class Productos
         return id_producto;
     }
 
-    public Productos(int id_producto, String nombreP, String categoria, int precio_u, String disponibilidad)
+    public Productos(int id_producto, String nombre, String categoria, int precio_u, String disponibilidad)
     {
         this.id_producto = id_producto;
-        this.nombreP = nombreP;
+        this.nombre = nombre;
         this.categoria = categoria;
         this.precio_u = precio_u;
         this.disponibilidad = disponibilidad;
@@ -31,12 +31,12 @@ public class Productos
 
     public String getNombreP()
     {
-        return nombreP;
+        return nombre;
     }
 
     public void setNombreP(String nombreP)
     {
-        this.nombreP = nombreP;
+        this.nombre = nombreP;
     }
 
     public String getCategoria()

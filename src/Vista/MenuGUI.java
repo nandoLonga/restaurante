@@ -29,7 +29,7 @@ public class MenuGUI
 
     public static void main(String[] args)
     {
-        JFrame frame = new JFrame("CRUD Clientes");
+        JFrame frame = new JFrame("CRUD Menu");
         frame.setContentPane(new MenuGUI().main);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
