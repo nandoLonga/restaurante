@@ -22,10 +22,10 @@ public class ProductosGUI
     private JTextField textField2;
     private JTextField textField3;
     private JTextField textField4;
-    private JTextField textField5;
     private JButton agregarButton;
     private JButton editarButton;
     private JButton eliminarButton;
+    private JComboBox comboBox1;
 
     ProductosDAO productosDAO = new ProductosDAO();
 
@@ -40,7 +40,7 @@ public class ProductosGUI
                 String nombre = textField2.getText();
                 String categoria = textField3.getText();
                 int precio_u = Integer.parseInt(textField4.getText());
-                String disponibilidad = textField5.getText();
+                String disponibilidad = comboBox1.getSelectedItem().toString();
 
                 Productos productos = new Productos(1,nombre,categoria,precio_u, disponibilidad);
                 productosDAO.agregar(productos);
@@ -54,11 +54,11 @@ public class ProductosGUI
             {
                 String nombre = textField2.getText();
                 String categoria = textField3.getText();
-                int precio = Integer.parseInt(textField4.getText());
-                String disponibilidad = textField5.getText();
+                int precio_u = Integer.parseInt(textField4.getText());
+                String disponibilidad = comboBox1.getSelectedItem().toString();
                 int id = Integer.parseInt(textField1.getText());
 
-                Productos productos = new Productos(id, nombre, categoria, precio, disponibilidad);
+                Productos productos = new Productos(id, nombre, categoria, precio_u, disponibilidad);
                 productosDAO.actualizar(productos);
                 obtenerDatos();
             }
@@ -88,6 +88,7 @@ public class ProductosGUI
                     textField2.setText((String) table1.getValueAt(selectFile, 1));
                     textField3.setText((String) table1.getValueAt(selectFile, 2));
                     textField4.setText((String) table1.getValueAt(selectFile, 3));
+                    comboBox1.addItem(table1.getValueAt(selectFile, 4));
                 }
             }
         });
@@ -133,11 +134,11 @@ public class ProductosGUI
 
     }
 
-    public static void main(String[] args)
+    public void ejecutarProducto()
     {
         JFrame frame = new JFrame("CRUD Productos");
-        frame.setContentPane(new ProductosGUI().main);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setContentPane(this.main);
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
         frame.setSize(800,600);

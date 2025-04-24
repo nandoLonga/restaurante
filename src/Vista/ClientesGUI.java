@@ -132,11 +132,10 @@ public class ClientesGUI
 
     }
 
-    public static void main(String[] args)
+    public void ejecutarCliente()
     {
         JFrame frame = new JFrame("CRUD Clientes");
-        frame.setContentPane(new ClientesGUI().main);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setContentPane(this.main);
         frame.pack();
         frame.setVisible(true);
         frame.setSize(800,600);

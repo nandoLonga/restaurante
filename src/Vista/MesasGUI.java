@@ -23,10 +23,10 @@ public class MesasGUI
     private JTextField textField1;
     private JTextField textField2;
     private JTextField textField3;
-    private JTextField textField4;
     private JButton agregarButton;
     private JButton editarButton;
     private JButton eliminarButton;
+    private JComboBox comboBox1;
 
     MesasDAO mesasDAO = new MesasDAO();
 
@@ -40,7 +40,7 @@ public class MesasGUI
             {
                 String numero = textField2.getText();
                 String capacidad = textField3.getText();
-                String estado_mesa = textField4.getText();
+                String estado_mesa = comboBox1.getSelectedItem().toString();
 
                 Mesas mesas = new Mesas(1,numero,capacidad,estado_mesa);
                 mesasDAO.agregar(mesas);
@@ -54,7 +54,7 @@ public class MesasGUI
             {
                 String numero = textField2.getText();
                 String capacidad = textField3.getText();
-                String estado_mesa = textField4.getText();
+                String estado_mesa = comboBox1.getSelectedItem().toString();
                 int id = Integer.parseInt(textField1.getText());
 
                 Mesas mesas = new Mesas(id, numero, capacidad, estado_mesa);
@@ -86,7 +86,7 @@ public class MesasGUI
                     textField1.setText((String) table1.getValueAt(selectFile, 0));
                     textField2.setText((String) table1.getValueAt(selectFile, 1));
                     textField3.setText((String) table1.getValueAt(selectFile, 2));
-                    textField4.setText((String) table1.getValueAt(selectFile, 3));
+                    comboBox1.addItem(table1.getValueAt(selectFile, 3));
                 }
             }
         });
@@ -131,11 +131,10 @@ public class MesasGUI
 
     }
 
-    public static void main(String[] args)
+    public void ejecutarMesas ()
     {
         JFrame frame = new JFrame("CRUD Mesas");
-        frame.setContentPane(new MesasGUI().main);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setContentPane(this.main);
         frame.pack();
         frame.setVisible(true);
         frame.setSize(800,600);

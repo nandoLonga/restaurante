@@ -21,8 +21,61 @@ public class MenuGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //OrdenGUI ordenGUI = new OrdenGUI();
-                //ordenGUI.ejecutar();
+                OrdenGUI ordenGUI = new OrdenGUI();
+                ordenGUI.ejecutarOrden();
+            }
+        });
+        añadirClienteButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ClientesGUI clientesGUI = new ClientesGUI();
+                clientesGUI.ejecutarCliente();
+            }
+        });
+        añadirEmpleadoButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {EmpleadosGUI empleadosGUI = new EmpleadosGUI();
+                empleadosGUI.ejecutarEmpleado ();
+            }
+        });
+        añadirMesaButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                MesasGUI mesasGUI = new MesasGUI();
+                mesasGUI.ejecutarMesas ();
+            }
+        });
+        añadirProductoButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ProductosGUI productosGUI = new ProductosGUI();
+                productosGUI.ejecutarProducto();
+            }
+        });
+        reportesButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+
+            }
+        });
+        chatButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                //ChatGUI chatGUI = new  ChatGUI();
+                //chatGUI.ejecutarChat();
+
             }
         });
     }

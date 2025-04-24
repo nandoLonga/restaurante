@@ -149,13 +149,13 @@ public class OrdenGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                String idDetalle = (String) comboBox5.getSelectedItem();
+                String idOrden = (String) comboBox5.getSelectedItem();
                 String producto = (String) comboBox6.getSelectedItem();
                 int cantidad = Integer.parseInt(textField2.getText());
 
-                int id_detalle = clienteMap.getOrDefault(idDetalle, -1);
+                int id_orden = clienteMap.getOrDefault(idOrden, -1);
                 int id_producto = empleadoMap.getOrDefault(producto, -1);
-                Detalleorden detalleorden = new Detalleorden(1, id_detalle, id_producto, cantidad);
+                Detalleorden detalleorden = new Detalleorden(1, id_orden, id_producto, cantidad);
                 detalleordenDAO.agregar(detalleorden);
 
                 //double precio = precio_u * cantidad;
@@ -415,14 +415,13 @@ public class OrdenGUI
         return idOrden;
     }
 
-    public static void main(String[] args)
+    public void ejecutarOrden()
     {
         JFrame frame = new JFrame("CRUD Orden");
-        frame.setContentPane(new OrdenGUI().main);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setContentPane(this.main);
         frame.pack();
         frame.setVisible(true);
-        frame.setSize(800,600);
+        frame.setSize(1200,600);
         frame.setResizable(false);
     }
 }

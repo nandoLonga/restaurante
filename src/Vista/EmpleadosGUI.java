@@ -129,11 +129,10 @@ public class EmpleadosGUI
         }
     }
 
-    public static void main(String[] args)
+    public void ejecutarEmpleado ()
     {
         JFrame frame = new JFrame("CRUD Empleados");
-        frame.setContentPane(new EmpleadosGUI().main);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setContentPane(this.main);
         frame.pack();
         frame.setVisible(true);
         frame.setSize(800,600);
