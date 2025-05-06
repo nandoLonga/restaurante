@@ -21,8 +21,8 @@ public class MenuGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                OrdenGUI ordenGUI = new OrdenGUI();
-                ordenGUI.ejecutarOrden();
+                //OrdenGUI ordenGUI = new OrdenGUI();
+               //ordenGUI.ejecutarOrden();
             }
         });
         añadirClienteButton.addActionListener(new ActionListener()
@@ -73,8 +73,11 @@ public class MenuGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //ChatGUI chatGUI = new  ChatGUI();
-                //chatGUI.ejecutarChat();
+                ChatClienteGUI chatclienteGUI = new ChatClienteGUI();
+                chatclienteGUI.ejecutar();
+
+                ChatGUI chatGUI = new  ChatGUI();
+                chatGUI.ejecutar1();
 
             }
         });

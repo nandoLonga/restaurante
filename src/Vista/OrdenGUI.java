@@ -5,6 +5,7 @@ import Controlador.DetalleordenDAO;
 import Controlador.OrdenDAO;
 import Modelo.Detalleorden;
 import Modelo.Orden;
+import Modelo.Productos;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -18,7 +19,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class OrdenGUI
 {
@@ -46,11 +49,14 @@ public class OrdenGUI
     private JTable table2;
     private JTextField textField4;
     private JLabel valor;
-    int idOrden = 0;
+    private JTextField textField5;
+
+    private List<Productos> productosList;
 
     OrdenDAO ordenDAO = new OrdenDAO();
     DetalleordenDAO detalleordenDAO = new DetalleordenDAO();
     MesasGUI mesasGUI = new MesasGUI();
+    int idOrden = 0;
 
     public OrdenGUI()
     {
@@ -62,28 +68,17 @@ public class OrdenGUI
         obtenerDatos2();
         cargarEstados();
         obtenerIdOrden();
+        int idOrden = obtenerIdOrden();
+        textField5.setText(String.valueOf(idOrden));
+
         agregarButton1.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                String nombreCliente = (String) comboBox1.getSelectedItem();
-                String nombreEmpleado = (String) comboBox3.getSelectedItem();
-                String nombreMesa = (String) comboBox2.getSelectedItem();
-                String estado_orden = (String) comboBox4.getSelectedItem();
-                LocalDateTime now = LocalDateTime.now();
-                DateTimeFormatter  formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                String fecha_orden = now.format(formatter);
-
-                int id_cliente = clienteMap.getOrDefault(nombreCliente, -1);
-                int id_empleado = empleadoMap.getOrDefault(nombreEmpleado, -1);
-                int id_mesa = mesaMap.getOrDefault(nombreMesa, -1);
-
-                Orden orden = new Orden(1,0,estado_orden,id_cliente,id_empleado,id_mesa, fecha_orden);
-                ordenDAO.agregar(orden);
+                agregar_orden();
                 obtenerDatos();
                 cargarEstados();
-
             }
         });
         editarButton1.addActionListener(new ActionListener()
@@ -91,24 +86,9 @@ public class OrdenGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-
-                String estado_orden = (String) comboBox4.getSelectedItem();
-                String nombreCliente = (String) comboBox1.getSelectedItem();
-                String nombreEmpleado = (String) comboBox3.getSelectedItem();
-                String nombreMesa = (String) comboBox2.getSelectedItem();
-                String fecha_orden = textField4.getText();
-                int id_orden = Integer.parseInt(textField1.getText());
-
-
-                int id_cliente = clienteMap.getOrDefault(nombreCliente, -1);
-                int id_empleado = empleadoMap.getOrDefault(nombreEmpleado, -1);
-                int id_mesa = mesaMap.getOrDefault(nombreMesa, -1);
-
-                Orden orden = new Orden(id_orden, 0,estado_orden, id_cliente, id_empleado, id_mesa, fecha_orden);
-                ordenDAO.actualizar(orden);
+                editar();
                 obtenerDatos();
                 cargarEstados();
-
             }
         });
         eliminarButton1.addActionListener(new ActionListener()
@@ -149,18 +129,9 @@ public class OrdenGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                String idOrden = (String) comboBox5.getSelectedItem();
-                String producto = (String) comboBox6.getSelectedItem();
-                int cantidad = Integer.parseInt(textField2.getText());
-
-                int id_orden = clienteMap.getOrDefault(idOrden, -1);
-                int id_producto = empleadoMap.getOrDefault(producto, -1);
-                Detalleorden detalleorden = new Detalleorden(1, id_orden, id_producto, cantidad);
-                detalleordenDAO.agregar(detalleorden);
-
-                //double precio = precio_u * cantidad;
-                //valor.setText(String.valueOf(precio));
+                anadir();
                 obtenerDatos2();
+
             }
         });
         actualizarButton.addActionListener(new ActionListener()
@@ -168,7 +139,9 @@ public class OrdenGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                actualizarP();
                 obtenerDatos2();
+
             }
         });
         borrarButton.addActionListener(new ActionListener()
@@ -194,7 +167,7 @@ public class OrdenGUI
                 if (selectFile >= 0)
                 {
                     textField3.setText((String) table1.getValueAt(selectFile, 0));
-                    comboBox5.addItem(table1.getValueAt(selectFile, 1));
+                    textField5.setText((String) table1.getValueAt(selectFile, 1));
                     comboBox6.addItem(table1.getValueAt(selectFile, 2));
                     textField2.setText((String) table1.getValueAt(selectFile, 3));
                 }
@@ -253,7 +226,7 @@ public class OrdenGUI
         model.addColumn("Id Detalle");
         model.addColumn("Id Orden");
         model.addColumn("Id Producto");
-        model.addColumn("Id Cantidad");
+        model.addColumn("Cantidad");
 
         table1.setModel(model);
 
@@ -266,20 +239,111 @@ public class OrdenGUI
             Statement stmt = con. createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM detalleorden");
 
+            int total = 0;
             while (rs.next())
             {
+
                 dato[0] = rs.getString(1);
                 dato[1] = rs.getString(2);
                 dato[2] = rs.getString(3);
                 dato[3] = rs.getString(4);
 
+                total+= Integer.parseInt(dato[3]) * darValorProducto(Integer.parseInt(dato[2]));
                 model.addRow(dato);
             }
+            valor.setText("$"+total);
         }
         catch (SQLException e)
         {
             e.printStackTrace();
         }
+
+    }
+
+    private int darValorProducto(int idPriducto) {
+        for(Productos p: productosList){
+            if(idPriducto == p.getId_producto()){
+                return p.getPrecio_u();
+            }
+        }
+        return 0;
+    }
+
+    public void agregar_orden()
+    {
+        String nombreCliente = (String) comboBox1.getSelectedItem();
+        String nombreEmpleado = (String) comboBox3.getSelectedItem();
+        String nombreMesa = (String) comboBox2.getSelectedItem();
+
+        int id_cliente = clienteMap.getOrDefault(nombreCliente, -1);
+        int id_empleado = empleadoMap.getOrDefault(nombreEmpleado, -1);
+        int id_mesa = mesaMap.getOrDefault(nombreMesa, -1);
+
+        String estado_orden= (String) comboBox1.getSelectedItem();
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String fecha_orden= now.format(formatter);
+
+        Orden orden = new Orden(1,0,estado_orden,id_cliente,id_empleado,id_mesa, fecha_orden);
+        ordenDAO.agregar(orden);
+
+            //actualiza el estado de la mesa a "ocupado"
+           //mesasGUI.actualizarEstadoMesa(id_mesa, "Ocupado");
+
+
+        //aqui nos muestra o obtenemos el id generado de la orden
+
+    }
+
+    public  void editar()
+    {
+        String estado_orden = (String) comboBox4.getSelectedItem();
+        String nombreCliente = (String) comboBox1.getSelectedItem();
+        String nombreEmpleado = (String) comboBox3.getSelectedItem();
+        String nombreMesa = (String) comboBox2.getSelectedItem();
+        int id_orden = Integer.parseInt(textField1.getText());
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String fecha_orden= now.format(formatter);
+
+
+        int id_cliente = clienteMap.getOrDefault(nombreCliente, -1);
+        int id_empleado = empleadoMap.getOrDefault(nombreEmpleado, -1);
+        int id_mesa = mesaMap.getOrDefault(nombreMesa, -1);
+
+        Orden orden = new Orden(id_orden, 0,estado_orden, id_cliente, id_empleado, id_mesa, fecha_orden);
+        ordenDAO.actualizar(orden);
+    }
+
+    public void anadir()
+    {
+        if (textField5.getText().isEmpty() || textField2.getText().isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "Recuerda llenar todos los campos antes de añadir la orden. Gracias.");
+            return;
+        }
+        int id_orden = Integer.parseInt(textField5.getText());
+        String producto = (String) comboBox6.getSelectedItem();
+
+        int id_producto = productoMap.getOrDefault(producto, -1);
+        int cantidad = Integer.parseInt(textField2.getText());
+        Detalleorden detalleorden = new Detalleorden(1, id_orden, id_producto, cantidad);
+        detalleordenDAO.agregar(detalleorden);
+        obtenerDatos2();
+        cargarEstados();
+    }
+
+    public void actualizarP()
+    {
+        int id_orden = Integer.parseInt(textField5.getText());
+        String producto = (String) comboBox6.getSelectedItem();
+        int id_producto = productoMap.getOrDefault(producto, -1);
+        int cantidad = Integer.parseInt(textField2.getText());
+        int id_detalle = Integer.parseInt(textField3.getText());
+
+        Detalleorden detalleorden = new Detalleorden(id_detalle, id_orden, id_producto, cantidad);
+        detalleordenDAO.actualizar(detalleorden);
+        obtenerDatos2();
 
     }
 
@@ -293,7 +357,7 @@ public class OrdenGUI
             while (rs.next())
             {
                 int id = rs.getInt("id_cliente");
-                String nombre = rs.getString("nombre");
+                String nombre = rs.getString("Nombre");
                 clienteMap.put(nombre, id);
                 comboBox1.addItem(nombre);
             }
@@ -336,7 +400,7 @@ public class OrdenGUI
             while (rs.next())
             {
                 int id = rs.getInt("id_empleado");
-                String nombre = rs.getString("nombre");
+                String nombre = rs.getString("Nombre");
                 empleadoMap.put(nombre, id);
                 comboBox3.addItem(nombre);
             }
@@ -351,26 +415,38 @@ public class OrdenGUI
     {
         comboBox6.removeAllItems();
         Connection con = conexionDB.getConnection();
-        String query = "SELECT nombre FROM productos WHERE disponibilidad = 'Si'";
+        String query = "SELECT * FROM productos WHERE disponibilidad = 'Si'";
         try(Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query))
         {
+            productosList = new ArrayList<>();
             while (rs.next())
             {
-                String nombre = rs.getString("nombre");
+                int id = rs.getInt("id_producto");
+                int valorPro =  rs.getInt("precio_u");
+                String nombre = rs.getString("Nombre");
+                productoMap.put(nombre, id);
                 comboBox6.addItem(nombre);
+                productosList.add(new Productos(id, nombre, null, valorPro, null));
             }
 
         }catch (SQLException e)
         {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "error no está el producto");
-
         }
+        valor.setText(String.valueOf(calcularSubtotal(idOrden)));
     }
+
+    public void calculartotal(int idOrden)
+    {
+
+    }
+
     private void cargarEstados()
     {
         comboBox4.removeAllItems();
+        comboBox4.addItem("Seleccionr estado");
         comboBox4.addItem("En preparación");
         comboBox4.addItem("Servida");
         comboBox4.addItem("Pagada");
@@ -393,17 +469,13 @@ public class OrdenGUI
         }
         return false;
     }
-
     public int obtenerIdOrden()
     {
-
         Connection con = conexionDB.getConnection();
-        try
-        {
+        try {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT MAX(id_orden) FROM orden");
-            if (rs.next())
-            {
+            if (rs.next()) {
                 idOrden = rs.getInt(1);
             }
             rs.close();
@@ -415,10 +487,59 @@ public class OrdenGUI
         return idOrden;
     }
 
-    public void ejecutarOrden()
+    public int obtenerPrecioUnitario(int idProducto)
+    {
+        int precioUnitario = 0;
+        Connection con = conexionDB.getConnection();
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT precio_u FROM productos WHERE id_producto = " + idProducto);
+            if (rs.next()) {
+                precioUnitario = rs.getInt(1);
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return precioUnitario;
+    }
+
+    public int calcularSubtotal(int idOrden)
+    {
+        int subtotal = 0;
+        Connection con = conexionDB.getConnection();
+
+        try {
+            Statement stmt = con.createStatement();
+            String query = "SELECT d.id_producto, d.cantidad, p.precio_u " +
+                    "FROM detalleorden d " +
+                    "JOIN productos p ON d.id_producto = p.id_producto " +
+                    "WHERE d.id_orden = " + idOrden;
+
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                int cantidad = rs.getInt("cantidad");
+                int precioUnitario = rs.getInt("precio_u");
+                subtotal += cantidad * precioUnitario;
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return subtotal;
+    }
+
+    public static void main(String[] args)
     {
         JFrame frame = new JFrame("CRUD Orden");
-        frame.setContentPane(this.main);
+        frame.setContentPane(new OrdenGUI().main);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
         frame.setSize(1200,600);

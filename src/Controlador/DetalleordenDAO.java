@@ -23,6 +23,7 @@ public class DetalleordenDAO
         {
             PreparedStatement pst = con.prepareStatement(query);
 
+            System.out.println("Datos: "+detalleorden.getId_orden()+" - "+detalleorden.getId_producto()+" - "+detalleorden.getCantidad());
             pst.setInt(1, detalleorden.getId_orden());
             pst.setInt(2, detalleorden.getId_producto());
             pst.setInt(3, detalleorden.getCantidad());
@@ -54,7 +55,7 @@ public class DetalleordenDAO
         {
             PreparedStatement pst = con.prepareStatement(query);
 
-            pst.setInt(1, detalleorden.getId_producto());
+            pst.setInt(1, detalleorden.getId_orden());
             pst.setInt(2, detalleorden.getId_producto());
             pst.setInt(3, detalleorden.getCantidad());
             pst.setInt(4, detalleorden.getId_detalle());
@@ -65,7 +66,7 @@ public class DetalleordenDAO
                 JOptionPane.showMessageDialog(null, "Registro actualizado con exito.");
             } else
             {
-                JOptionPane.showMessageDialog(null, "Regostro NO actualizado con exito.");
+                JOptionPane.showMessageDialog(null, "Registro NO actualizado con exito.");
             }
 
         } catch (SQLException e)

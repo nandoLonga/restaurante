@@ -25,6 +25,7 @@ public class EmpleadosGUI
     private JButton agregarButton;
     private JButton editarButton;
     private JButton eliminarButton;
+    private JComboBox comboBox1;
 
     EmpleadosDAO empleadosDAO = new EmpleadosDAO();
 
@@ -37,7 +38,7 @@ public class EmpleadosGUI
             public void actionPerformed(ActionEvent e)
             {
                 String nombre = textField2.getText();
-                String cargo = textField3.getText();
+                String cargo = comboBox1.getSelectedItem().toString();
                 int salario = Integer.parseInt(textField4.getText());
 
                 Empleados empleados = new Empleados(1,nombre,cargo,salario);
@@ -51,7 +52,7 @@ public class EmpleadosGUI
             public void actionPerformed(ActionEvent e)
             {
                 String nombre = textField2.getText();
-                String cargo = textField3.getText();
+                String cargo = comboBox1.getSelectedItem().toString();
                 int salario = Integer.parseInt(textField4.getText());
                 int id = Integer.parseInt(textField1.getText());
 
@@ -84,7 +85,7 @@ public class EmpleadosGUI
                 {
                     textField1.setText((String) table1.getValueAt(selectFile, 0));
                     textField2.setText((String) table1.getValueAt(selectFile, 1));
-                    textField3.setText((String) table1.getValueAt(selectFile, 2));
+                    comboBox1.addItem(table1.getValueAt(selectFile, 2));
                     textField4.setText((String) table1.getValueAt(selectFile, 3));
                 }
             }
